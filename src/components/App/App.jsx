@@ -33,8 +33,10 @@ function App() {
       <header className="App-header">
         <h1 className="App-title">Gallery of My Life</h1>
       </header>
-      <p>Gallery goes here</p>
-      <img src="images/goat_small.jpg" />
+      <section className='grid'>
+        <GalleryList gallery={gallery} fetchGallery={fetchGallery} />
+      </section>
+
     </div>
   );
 }

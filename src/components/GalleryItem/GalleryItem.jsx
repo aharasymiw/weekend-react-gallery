@@ -1,48 +1,42 @@
 // represents a single image in the gallery with the ability to click the image to toggle between image and description as well as the ability to like an image.
+import { useState } from 'react';
 import axios from 'axios';
 
-function ItemList(props) {
+function GalleryItem(props) {
 
+    const item = props.item;
+    const [clicked, setClicked] = useState(false);
 
-    const buy = (id) => {
+    const likeIt = (id) => {
 
         axios({
             method: 'PUT',
-            url: `/items/${id}`,
+            url: `/gallery/like/${id}`,
         }).then((response) => {
             console.log('PUT response:', response);
-            props.fetchItems();
-        }).catch((error) => {
-            console.log('whoopsie:', error);
-        })
-    }
-
-    const remove = (id) => {
-
-        axios({
-            method: 'DELETE',
-            url: `/items/${id}`,
-        }).then((response) => {
-            console.log('DELETE response:', response);
-            props.fetchItems();
+            props.fetchGallery();
         }).catch((error) => {
             console.log('whoopsie:', error);
         })
     }
 
     return (
-        props.itemList.map((item) => {
-            return (
-                <span key={item.id} className="item">
-                    <p>{item.name}</p>
-                    <p>{item.quantity} {item.unit}</p>
-                    {!item.is_bought && <span><button onClick={() => { buy(item.id) }}>Buy</button> <button onClick={() => { remove(item.id) }}>Remove</button></span>}
-                    {item.is_bought && <p>Purchased</p>}
-                    <p>{item.is_bought}</p>
-                </span>
-            );
-        })
+        <span className='unit'>
+            <div className="item" onClick={() => { setClicked(!clicked) }}>
+                {!clicked && <img src={item.path} alt={item.description} height={100} width={100} />}
+                {clicked && <p>{item.description}</p>}
+            </div>
+
+            <button onClick={() => { likeIt(item.id) }}>love it!</button>
+
+            {/* {!item.is_bought && <span><button onClick={() => { buy(item.id) }}>Buy</button> <button onClick={() => { remove(item.id) }}>Remove</button></span>}
+            {item.is_bought && <p>Purchased</p>} */}
+
+            {item.likes > 1 && <p>{item.likes} people love this!</p>}
+            {item.likes === 1 && <p>1 person loves this!</p>}
+            {item.likes === 0 && <p>No people love this :(</p>}
+        </span>
     );
 }
 
-export default ItemList;
+export default GalleryItem;
